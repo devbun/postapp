@@ -1,6 +1,8 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useBoundStore from "../../store/Store";
+import classes from './AuthenticationTitle.module.css';
+import { useState, useEffect } from "react";
+
 import {
   TextInput,
   PasswordInput,
@@ -13,11 +15,14 @@ import {
   Group,
   Button,
 } from '@mantine/core';
-import classes from './AuthenticationTitle.module.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { loginService, authLoading, user } = useBoundStore((state) => state);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!!user) {
@@ -27,11 +32,20 @@ const LoginPage = () => {
 
   const onLogin = async (e) => {
     e.preventDefault();
-    let email = e.target.email?.value;
-    let password = e.target.password?.value;
-    if (!email || !password) return;
-    loginService(email, password);
+
+    setErrorMessage(""); // Clear any previous errors
+    if (!email || !password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+
+    try {
+      await loginService(email, password);
+    } catch (error) {
+      setErrorMessage("Invalid credentials. Please try again.");
+    }
   };
+
   return (
     <Container size={420} my={40}>
       <Title ta="center" className={classes.title}>
@@ -45,55 +59,44 @@ const LoginPage = () => {
       </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-        <TextInput label="Email" placeholder="you@picly.dev" required />
-        <PasswordInput label="Password" placeholder="Your password" required mt="md" />
+        {errorMessage && (
+          <Text color="red" size="sm" align="center" mt={10}>
+            {errorMessage}
+          </Text>
+        )}
+        <TextInput
+          label="Email"
+          placeholder="you@picly.dev"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.currentTarget.value)}
+        />
+        <PasswordInput
+          label="Password"
+          placeholder="Your password"
+          required
+          mt="md"
+          value={password}
+          onChange={(e) => setPassword(e.currentTarget.value)}
+        />
         <Group justify="space-between" mt="lg">
           <Checkbox label="Remember me" />
           <Anchor component="button" size="sm">
             Forgot password?
           </Anchor>
         </Group>
-        <Button fullWidth mt="xl">
+        <Button
+          fullWidth
+          mt="xl"
+          onClick={onLogin}
+          loading={authLoading}
+          disabled={authLoading}
+        >
           Sign in
         </Button>
       </Paper>
     </Container>
   );
-  // return (
-  //   <div style={{ display: "flex", justifyContent: "center" }}>
-  //     <form onSubmit={onLogin}>
-  //       <div
-  //         style={{
-  //           display: "flex",
-  //           flexDirection: "column",
-  //           alignItems: "center",
-  //           gridGap: "20px",
-  //           background: "#d3d3d3",
-  //           padding: "50px",
-  //         }}
-  //       >
-
-  //         <h1>This is the login page</h1>
-  //         <input
-  //           placeholder="email"
-  //           name="email"
-  //           type="email"
-  //           required
-  //           style={{ minWidth: "320px", height: "26px" }}
-  //         />
-  //         <input
-  //           placeholder="password"
-  //           name="password"
-  //           type="password"
-  //           required
-  //           style={{ minWidth: "320px", height: "26px" }}
-  //         />
-  //         <button type="submit">login</button>
-  //         {authLoading ? <h2>Loading...</h2> : null}
-  //       </div>
-  //     </form>
-  //   </div>
-  // );
 };
 
 export default LoginPage;

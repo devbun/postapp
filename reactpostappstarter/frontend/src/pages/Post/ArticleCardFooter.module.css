@@ -1,0 +1,30 @@
+.card {
+    background-color: var(--mantine-color-body);
+    width: 50%;
+    margin: auto;
+  }
+
+
+  .title {
+    font-family:
+      Greycliff CF,
+      var(--mantine-font-family);
+  }
+
+  .edit {
+    font-size: 0.75rem;
+    padding: 0.5em 1em 0.5em 1em;
+    margin-right: 0.5em;
+    color: darkcyan;
+    background-color: lightcyan;
+    box-shadow: 0px 1px 5px lightblue;
+    border-radius: 10px;
+    user-select: none;
+    cursor: pointer;
+  }
+  
+  .footer {
+    padding: var(--mantine-spacing-xs) var(--mantine-spacing-lg);
+    margin-top: var(--mantine-spacing-md);
+    border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  }

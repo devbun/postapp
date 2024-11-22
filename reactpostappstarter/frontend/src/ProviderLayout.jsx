@@ -24,7 +24,7 @@ export default ({ children }) => {
   return (
     <>
       <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
-        <DrawerProvider>{children}</DrawerProvider>
+        <DrawerProvider >{children}</DrawerProvider>
       </MantineProvider>
     </>
   );
