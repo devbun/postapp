@@ -35,9 +35,15 @@ export const addPost = (post: any) => {
   //  Issues:
   //  *     The request body contains the title, category, and image,
   //  *     but the addPost function needs to add a unique id
+  post.id = posts.length > 0 ? posts[posts.length - 1].id + 1 : 1;
   //  *     and the id of the currently logged in user to the post.
-  post.id = 3;
-  post.userId = 2;
+  const user = findUserById(post.userId);
+  if (!user) {
+    throw new Error("Invalid userId");
+  }
+
+  // post.id = 3;
+  // post.userId = 2;
   posts.push(post);
 };
 

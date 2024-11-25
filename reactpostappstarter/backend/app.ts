@@ -47,12 +47,64 @@ app.get("/api/posts", async (req, res) => {
   res.json(posts);
 });
 
+app.put("/api/posts/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10); 
+  const updatedPost = req.body;
+  const authHeader = req.headers.authorization;
+
+  try {
+    // Authorization: Verify token
+    const token = parseToken(authHeader, res);
+    const decodedUser = jwt.verify(token, "secret");
+    const user = findUserById((decodedUser as IDecodedUser).id);
+
+    // Find the post
+    const postIndex = posts.findIndex((post) => post.id === id);
+    if (postIndex === -1) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    const post = posts[postIndex];
+
+    // Ensure the user owns the post
+    if (post.userId !== user.id) {
+      return res.status(403).json({ error: "Unauthorized to edit this post" });
+    }
+
+    // Validation: Check for required fields
+    if (!updatedPost.title || !updatedPost.category || !updatedPost.content) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Update the post
+    posts[postIndex] = { ...post, ...updatedPost }; // Merge updated data
+    res.json({ success: true, post: posts[postIndex] });
+  } catch (error) {
+    console.error("Error updating post:", error);
+    res.status(500).json({ error: "An error occurred while updating the post" });
+  }
+});
+
+
 // ⭐️ TODO: Implement this yourself
 app.get("/api/posts/:id", (req, res) => {
-  const id = req.params.id;
-  // The line below should be fixed.
-  res.json(posts[0]);
+  const id = parseInt(req.params.id, 10); // Convert the id from string to number
+  
+  const post = posts.find((post) => post.id === id);
+
+  if (!post) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+
+  try {
+    const author = findUserById(post.userId);
+    return res.json({ post, author });
+  } catch (error) {
+    // Handle case where author is not found
+    return res.status(404).json({ error: "Author not found" });
+  }
 });
+
 
 /**
  * Problems with this:
