@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import { PostPage, postsLoader } from "./pages/Post/Post.page";
 import { postDetailsLoader } from "./pages/Post/PostDetails.page";
+import EditPostPage from "./pages/Post/PostEdit";
 import PostDetailsPage from "./pages/Post/PostDetails.page";
 
 export const Router = () => {
@@ -63,6 +64,17 @@ export const Router = () => {
           }
           loader={postDetailsLoader}
         />
+        {/* START added part */}
+        <Route
+          path="/posts/:id/edit"
+          element={
+            <ProtectedRoute isAllowed={!!authCheck}>
+              <EditPostPage />
+            </ProtectedRoute>
+          }
+          loader={postDetailsLoader}
+        />
+        {/* END added part */}
         <Route path="/" element={<Landing />} />
         <Route path="*" element={<NotFound />} />
       </Route>

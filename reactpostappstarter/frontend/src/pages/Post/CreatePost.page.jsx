@@ -3,9 +3,11 @@ import DOMAIN from "../../services/endpoint";
 import axios from "axios";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
+import useBoundStore from "../../store/Store";
 
 function CreatePostPage() {
   const navigate = useNavigate();
+  const { user } = useBoundStore((state) => state); 
   const form = useForm({
     initialValues: {
       title: "",
@@ -16,9 +18,15 @@ function CreatePostPage() {
   });
 
   const handleSubmit = async (values) => {
-    const res = await axios.post(`${DOMAIN}/api/posts`, values);
-    if (res?.data.success) {
-      navigate("/posts");
+    try {
+      const postData = { ...values, userId: user.id };
+      const res = await axios.post(`${DOMAIN}/api/posts`, postData);
+
+      if (res?.data.success) {
+        navigate("/posts");
+      }
+    } catch (error) {
+      console.error("Error creating post:", error);
     }
   };
 

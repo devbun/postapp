@@ -57,7 +57,7 @@ if (!post) return <Text>No post found</Text>;
 const isOwner = post?.userId === user?.id;
 
 const handleEditClick = () => {
-  navigate(`/edit-post/${id}`);
+  navigate(`/edit/${id}`);
 };
 
   return (
@@ -104,7 +104,7 @@ const handleEditClick = () => {
 
 
           {isOwner && (
-                      <div onClick={handleEditClick} className={classes.edit}>Edit</div>
+                      <Link to={'edit/'} className={classes.edit}>Edit</Link>
       )}
             <ActionIcon variant="subtle" color="gray">
               <IconHeart size={20} color={theme.colors.red[6]} stroke={1.5} />
